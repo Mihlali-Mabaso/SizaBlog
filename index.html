@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Siza: Offline Emergency Voice AI for African Languages. A research story about on-device machine learning, federated learning, and security sandboxing in rural South Africa.">
+    <meta property="og:title" content="Siza: Offline Emergency Voice for African Languages">
+    <meta property="og:type" content="website">
+    <title>Siza: Offline Emergency Voice AI for African Languages | Blog by Mihlali Mabaso</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=JetBrains+Mono:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --clay-rust: #A93C29;
+            --clay-rust-hover: #C94A33;
+            --clay-dark: #862E1F;
+            --ochre-gold: #C79B3B;
+            --ochre-gold-light: #F7E7C4;
+            --safari-olive: #4E5F3E;
+            --safari-olive-light: #E2EAD9;
+            --earth-charcoal: #1F1A15;
+            --earth-black: #12100E;
+            --warm-paper: #FDFBF7;
+            --warm-cream: #F4F0E6;
+            --border-color: #E2DCCF;
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.08);
+
+            --font-serif: 'Lora', Georgia, serif;
+            --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--warm-paper);
+            color: var(--earth-charcoal);
+            font-family: var(--font-sans);
+            line-height: 1.75;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Repeating geometric African-inspired pattern border */
+        .pattern-bar {
+            height: 12px;
+            width: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='12' viewBox='0 0 40 12'%3E%3Cpolygon points='0,12 10,0 20,12' fill='%23A93C29'/%3E%3Cpolygon points='20,12 30,0 40,12' fill='%23C79B3B'/%3E%3C/svg%3E");
+            background-repeat: repeat-x;
+        }
+
+        /* ---------- HEADER & HERO ---------- */
+        .blog-header {
+            background-color: var(--earth-black);
+            color: var(--warm-paper);
+            position: relative;
+            overflow: hidden;
+            border-bottom: 4px solid var(--clay-rust);
+        }
+
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 80px 24px 60px;
+        }
+
+        .eyebrow-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .eyebrow-tag {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--ochre-gold);
+            border: 1px solid #3d352c;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .eyebrow-date {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: #8a8275;
+        }
+
+        .blog-title {
+            font-family: var(--font-serif);
+            font-size: clamp(32px, 5vw, 48px);
+            font-weight: 700;
+            line-height: 1.15;
+            margin-bottom: 20px;
+            letter-spacing: -0.5px;
+        }
+
+        .blog-title span {
+            color: var(--clay-rust);
+            font-style: italic;
+        }
+
+        .blog-subtitle {
+            font-size: clamp(16px, 2.5vw, 20px);
+            color: #d6cfbe;
+            font-weight: 300;
+            max-width: 680px;
+            margin-bottom: 40px;
+        }
+
+        .author-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 16px 20px;
+            max-width: fit-content;
+        }
+
+        .author-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--clay-rust);
+            color: var(--warm-paper);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-serif);
+            font-weight: 700;
+            font-size: 16px;
+            border: 2px solid var(--ochre-gold);
+        }
+
+        .author-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .author-name {
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--warm-paper);
+        }
+
+        .author-title {
+            font-size: 12px;
+            color: #8a8275;
+        }
+
+        /* ---------- MAIN WRAPPER ---------- */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 60px 24px 100px;
+        }
+
+        p {
+            font-size: 16.5px;
+            color: #3a332a;
+            margin-bottom: 24px;
+            text-align: justify;
+        }
+
+        a {
+            color: var(--clay-rust);
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        a:hover {
+            color: var(--clay-rust-hover);
+            border-color: var(--clay-rust-hover);
+        }
+
+        .panel-label {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin: 64px 0 24px;
+        }
+
+        .panel-num {
+            width: 32px;
+            height: 32px;
+            background: var(--clay-rust);
+            color: var(--warm-paper);
+            font-family: var(--font-serif);
+            font-weight: 700;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .panel-title {
+            font-family: var(--font-serif);
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--earth-charcoal);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 6px;
+            flex: 1;
+        }
+
+        /* ---------- STATS GRID ---------- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin: 32px 0 40px;
+        }
+
+        .stat-card {
+            background: var(--warm-cream);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-num {
+            font-family: var(--font-serif);
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--clay-rust);
+            margin-bottom: 8px;
+            border-bottom: 2px solid var(--clay-rust);
+            padding-bottom: 4px;
+            width: fit-content;
+        }
+
+        .stat-label {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--earth-charcoal);
+            margin-bottom: 8px;
+        }
+
+        .stat-desc {
+            font-size: 13px;
+            color: #5c5346;
+            line-height: 1.5;
+            margin-bottom: 0;
+            text-align: left;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ---------- DIAGRAMS & CHARTS ---------- */
+        .diagram-container {
+            margin: 32px 0;
+            text-align: center;
+        }
+
+        .diagram-caption {
+            font-size: 12.5px;
+            color: #8a8275;
+            margin-top: 10px;
+            font-family: var(--font-mono);
+        }
+
+        .chart-box {
+            background: var(--earth-black);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 32px 0;
+            box-shadow: var(--shadow-md);
+        }
+
+        .chart-box img {
+            display: block;
+            width: 100%;
+            height: auto;
+            border-radius: 6px;
+            margin-bottom: 16px;
+        }
+
+        .chart-caption {
+            font-family: var(--font-sans);
+            font-size: 13px;
+            color: #d6cfbe;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .img-fallback-ph {
+            border: 2px dashed #A89A78;
+            background: repeating-linear-gradient(45deg, #1c1815, #1c1815 10px, #26211c 10px, #26211c 20px);
+            color: var(--ochre-gold);
+            font-family: var(--font-mono);
+            font-size: 12.5px;
+            text-align: center;
+            padding: 60px 20px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+        }
+
+        /* ---------- CRYPTOGRAPHIC RECEIPT CARDS ---------- */
+        .receipt-list {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            margin: 32px 0 40px;
+        }
+
+        .receipt {
+            background: #ffffff;
+            border-top: 5px solid var(--clay-rust);
+            border-left: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            position: relative;
+            box-shadow: var(--shadow-sm);
+            border-radius: 4px 4px 0 0;
+            padding: 24px 24px 12px;
+        }
+
+        .receipt-jagged-bottom {
+            height: 12px;
+            width: 100%;
+            background: linear-gradient(-135deg, var(--warm-paper) 6px, transparent 0), linear-gradient(135deg, var(--warm-paper) 6px, transparent 0);
+            background-size: 12px 12px;
+            background-repeat: repeat-x;
+            background-position: bottom;
+            position: absolute;
+            bottom: -12px;
+            left: 0;
+            z-index: 2;
+        }
+
+        .receipt-barcode {
+            height: 24px;
+            background: repeating-linear-gradient(90deg, var(--earth-charcoal), var(--earth-charcoal) 2px, transparent 2px, transparent 6px, var(--earth-charcoal) 6px, var(--earth-charcoal) 7px, transparent 7px, transparent 10px);
+            opacity: 0.25;
+            margin-bottom: 16px;
+        }
+
+        .receipt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: #8a8275;
+        }
+
+        .receipt-hash {
+            font-weight: 700;
+            color: var(--clay-rust);
+        }
+
+        .receipt-body {
+            margin-bottom: 16px;
+        }
+
+        .receipt-source {
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: 15.5px;
+            color: #5c5346;
+            margin-bottom: 12px;
+        }
+
+        /* Mock Audio Wave Player */
+        .audio-player-mock {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: var(--warm-paper);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 8px 16px;
+            margin-bottom: 16px;
+        }
+
+        .play-btn {
+            background: var(--clay-rust);
+            color: var(--warm-paper);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .play-btn:hover {
+            background-color: var(--clay-rust-hover);
+        }
+
+        .play-btn svg {
+            fill: currentColor;
+            width: 12px;
+            height: 12px;
+            margin-left: 2px;
+        }
+
+        .audio-wave {
+            display: flex;
+            align-items: center;
+            gap: 2.5px;
+            flex: 1;
+            height: 24px;
+        }
+
+        .audio-wave span {
+            display: block;
+            width: 3px;
+            background-color: var(--border-color);
+            border-radius: 1.5px;
+            transition: background-color 0.2s;
+        }
+
+        .receipt:hover .audio-wave span {
+            background-color: var(--clay-rust);
+            opacity: 0.65;
+        }
+
+        @keyframes waveform-dance {
+
+            0%,
+            100% {
+                transform: scaleY(1);
+            }
+
+            50% {
+                transform: scaleY(0.3);
+            }
+        }
+
+        .receipt.playing .audio-wave span {
+            background-color: var(--clay-rust);
+            opacity: 1;
+            animation: waveform-dance 1s ease-in-out infinite;
+        }
+
+        .receipt.playing .audio-wave span:nth-child(2n) {
+            animation-delay: 0.15s;
+        }
+
+        .receipt.playing .audio-wave span:nth-child(3n) {
+            animation-delay: 0.3s;
+        }
+
+        .receipt.playing .audio-wave span:nth-child(4n) {
+            animation-delay: 0.45s;
+        }
+
+        .receipt.playing .audio-wave span:nth-child(5n) {
+            animation-delay: 0.6s;
+        }
+
+        .audio-duration {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: #8a8275;
+        }
+
+        .receipt-out {
+            background: var(--warm-cream);
+            border-left: 3px solid var(--clay-rust);
+            padding: 12px 16px;
+            font-family: var(--font-mono);
+            font-size: 13.5px;
+            color: var(--earth-charcoal);
+            word-break: break-all;
+            margin-bottom: 12px;
+        }
+
+        .receipt-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+            border-top: 1px dashed var(--border-color);
+            padding-top: 12px;
+        }
+
+        .receipt-latency {
+            font-family: var(--font-mono);
+            font-size: 11.5px;
+            color: #8a8275;
+        }
+
+        .verdict-badge {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        .verdict-match {
+            background: var(--safari-olive-light);
+            color: var(--safari-olive);
+        }
+
+        .verdict-rough {
+            background: var(--ochre-gold-light);
+            color: #805c12;
+        }
+
+        .verdict-control {
+            background: #e5dec9;
+            color: #5c5346;
+        }
+
+        .sticky-card {
+            background: #FFFCEB;
+            border: 1px dashed var(--ochre-gold);
+            box-shadow: 2px 4px 12px rgba(199, 155, 59, 0.08);
+            border-radius: 8px;
+            padding: 24px;
+            margin: 32px 0;
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: 16px;
+            line-height: 1.7;
+            position: relative;
+        }
+
+        .sticky-card::before {
+            content: "“";
+            font-family: var(--font-serif);
+            font-size: 80px;
+            line-height: 1;
+            color: var(--ochre-gold);
+            opacity: 0.15;
+            position: absolute;
+            top: -10px;
+            left: 10px;
+        }
+
+        .sticky-card-author {
+            display: block;
+            margin-top: 12px;
+            font-family: var(--font-sans);
+            font-style: normal;
+            font-weight: 600;
+            font-size: 13.5px;
+            color: var(--clay-rust);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ---------- STUDENT REFLECTIONS JOURNAL ---------- */
+        .journal-section {
+            background: var(--warm-cream);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            padding: 32px 24px;
+            margin: 48px 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .journal-intro {
+            max-width: 720px;
+            margin: 0 auto 32px;
+        }
+
+        .journal-lede {
+            font-family: var(--font-serif);
+            font-size: 17px;
+            line-height: 1.7;
+            color: var(--earth-charcoal);
+            text-align: left;
+        }
+
+        .journal-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .journal-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .journal-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .journal-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-accent-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--clay-rust);
+        }
+
+        .journal-card:nth-child(even) .card-accent-bar {
+            background: var(--ochre-gold);
+        }
+
+        .journal-card h4 {
+            font-family: var(--font-serif);
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--earth-charcoal);
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .journal-card p {
+            font-size: 13.5px;
+            line-height: 1.6;
+            color: #5c5346;
+            margin-bottom: 12px;
+            text-align: left;
+        }
+
+        .journal-card p:last-child {
+            margin-bottom: 0;
+        }
+
+        .journal-card code {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            background: var(--warm-paper);
+            padding: 2px 4px;
+            border-radius: 4px;
+            color: var(--clay-rust);
+        }
+
+        /* ---------- SECURITY CONSOLE WINDOW ---------- */
+        .console-window {
+            background: #141210;
+            border-radius: 8px;
+            border: 1px solid #2d2620;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            margin: 32px 0;
+            font-family: var(--font-mono);
+        }
+
+        .console-header {
+            background: #1c1815;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #2d2620;
+        }
+
+        .console-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .console-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .dot-red {
+            background: #ff5f56;
+        }
+
+        .dot-yellow {
+            background: #ffbd2e;
+        }
+
+        .dot-green {
+            background: #27c93f;
+        }
+
+        .console-title {
+            color: #8a8275;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+
+        .console-body {
+            padding: 18px;
+            color: #e5dec9;
+            font-size: 12.5px;
+            line-height: 1.65;
+            background: #12100e;
+        }
+
+        .console-line {
+            margin-bottom: 6px;
+        }
+
+        .console-line:last-child {
+            margin-bottom: 0;
+        }
+
+        .console-warn {
+            color: var(--ochre-gold);
+            font-weight: 500;
+        }
+
+        .console-success {
+            color: #9bd17e;
+            font-weight: 500;
+        }
+
+        /* ---------- UNSOLVED FRONTIERS GRID ---------- */
+        .frontiers-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 32px 0;
+        }
+
+        @media (max-width: 768px) {
+            .frontiers-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .frontier-card {
+            background: var(--warm-cream);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            gap: 16px;
+            transition: transform 0.2s ease;
+        }
+
+        .frontier-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .frontier-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--clay-rust);
+            color: var(--warm-paper);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-serif);
+            font-weight: bold;
+            font-size: 15px;
+            flex-shrink: 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .frontier-card:nth-child(even) .frontier-icon {
+            background: var(--ochre-gold);
+        }
+
+        .frontier-details h4 {
+            margin: 0 0 6px 0;
+            font-family: var(--font-serif);
+            font-size: 15.5px;
+            color: var(--earth-charcoal);
+        }
+
+        .frontier-details p {
+            margin: 0;
+            font-size: 13px;
+            color: #5c5346;
+            line-height: 1.5;
+            text-align: left;
+        }
+
+        /* ---------- FOOTER ---------- */
+        .blog-footer {
+            background: var(--earth-black);
+            color: var(--warm-paper);
+            border-top: 4px solid var(--clay-rust);
+            padding: 60px 24px 50px;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer-heading {
+            font-family: var(--font-serif);
+            font-size: 22px;
+            color: var(--ochre-gold);
+            margin-bottom: 16px;
+        }
+
+        .footer-text {
+            color: #d6cfbe;
+            font-size: 15px;
+            margin-bottom: 24px;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            font-family: var(--font-mono);
+            font-size: 13px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 16px 0;
+            margin-bottom: 24px;
+        }
+
+        .footer-links a {
+            color: var(--warm-cream);
+        }
+
+        .footer-links a:hover {
+            color: var(--ochre-gold);
+        }
+
+        .footer-closing {
+            font-size: 13.5px;
+            color: #8a8275;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        @media (max-width: 560px) {
+            .footer-closing {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="blog-header">
+        <div class="pattern-bar"></div>
+        <div class="header-content">
+            <div class="eyebrow-container">
+                <span class="eyebrow-tag">Research Field Notes</span>
+                <span class="eyebrow-date">30 June 2026</span>
+            </div>
+            <h1 class="blog-title">I Built an AI That Listens in <span>isiZulu and English</span></h1>
+            <p class="blog-subtitle">No cherry-picked clips. The real transcriptions, federated learning
+                simulation, and security boundary tests, all from an offline emergency voice AI prototype.</p>
+
+            <div class="author-card">
+                <div class="author-avatar">MM</div>
+                <div class="author-info">
+                    <span class="author-name">Mihlali Mabaso</span>
+                    <span class="author-title">AWS AI & ML Scholar · University of the Free State · Founder, Create On
+                        Base</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <p>If you're reading this, you probably just scanned a QR code off a research poster covered in torn paper and a
+            slightly stressed-looking phone screen. Hi. That poster is mine. This is the part it didn't have room for
+            the actual story, the actual outputs, and yes, the actual mess.</p>
+
+        <p>Grab a seat. This one runs long, because the problem I'm working on doesn't fit on a poster either.</p>
+
+        <!-- 01 THE PROBLEM -->
+        <div class="panel-label">
+            <div class="panel-num">1</div>
+            <div class="panel-title">The 40 minutes that started this</div>
+        </div>
+
+        <p>Rural ambulance response time in South Africa is officially targeted at 40 minutes. In practice, however, it
+            is often over 60 minutes. For residents in deep rural areas, it can be much worse than that. Now stack two
+            critical structural problems on top of that agonizing wait:</p>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-num">70%</div>
+                <div class="stat-label">Offline Isolation</div>
+                <p class="stat-desc">Over 70% of rural South Africa does not have reliable internet connectivity.
+                    Standard apps and chatbots fail immediately.</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num">ZU</div>
+                <div class="stat-label">Language Barrier</div>
+                <p class="stat-desc">Most emergency systems are English first. If you speak isiZulu or Sesotho, the
+                    system leaves you out of the room.</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num">80%</div>
+                <div class="stat-label">Financial Vulnerability</div>
+                <p class="stat-desc">Over 80% of South Africans do not have emergency savings. A health crisis easily
+                    becomes a devastating financial event.</p>
+            </div>
+        </div>
+
+        <p>So the question I kept circling was annoyingly simple: <em>what if your phone could understand you, in your
+                language, with zero internet, and still know what to do?</em> That question became Siza.</p>
+
+        <!-- 02 WHAT IT IS & ARCHITECTURE -->
+        <div class="panel-label">
+            <div class="panel-num">2</div>
+            <div class="panel-title">What Siza actually is the non-poster version</div>
+        </div>
+
+        <p>Siza is an offline, voice-first emergency assistant. You speak in isiZulu, Sesotho, or English and it
+            transcribes, triages, and can alert nearby trained responders within a 2km radius. No SIM required, no Wi-Fi
+            required, no R5,000 smartphone required.</p>
+
+        <p>The whole thing is designed to run on phones under R500, with under 200MB of RAM, because if a tool only
+            works on a flagship phone, it doesn't actually reach the people who need it most.</p>
+
+        <p>Under the hood, it's a fine-tuned Whisper-small model, quantized down with ONNX, running through WebAssembly
+            so it executes locally, sandboxed, inside the phone itself. No cloud round-trip. No server seeing your
+            voice. Your voice literally never leaves your device and I want to be precise about that sentence, because
+            in Siza that's not a privacy <em>policy</em> I wrote in a settings menu. It's the architecture. There's no
+            upload path to remove.</p>
+
+        <div class="diagram-container">
+            <!-- Inline SVG Architecture Diagram -->
+            <svg viewBox="0 0 800 340" width="100%" height="auto"
+                style="background: var(--warm-cream); border: 1px solid var(--border-color); border-radius: 8px;"
+                xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <!-- Marker for red arrows -->
+                    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6"
+                        orient="auto-start-reverse">
+                        <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#A93C29" />
+                    </marker>
+                    <!-- Marker for green arrows -->
+                    <marker id="arrow-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6"
+                        orient="auto-start-reverse">
+                        <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#4E5F3E" />
+                    </marker>
+                    <!-- Marker for gold arrows -->
+                    <marker id="arrow-gold" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6"
+                        orient="auto-start-reverse">
+                        <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#C79B3B" />
+                    </marker>
+                </defs>
+
+                <!-- Sandbox Group Container -->
+                <rect x="190" y="30" width="400" height="280" rx="10" fill="#ffffff" stroke="#A93C29" stroke-width="2"
+                    stroke-dasharray="6,4" />
+                <text x="210" y="55" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="bold"
+                    fill="#A93C29" letter-spacing="1px">ON-DEVICE SECURE SANDBOX</text>
+
+                <!-- Voice Input Box -->
+                <rect x="30" y="85" width="130" height="70" rx="6" fill="#ffffff" stroke="#E2DCCF" stroke-width="2" />
+                <text x="95" y="118" text-anchor="middle" font-family="'Inter', sans-serif" font-size="13"
+                    font-weight="bold" fill="#1F1A15">Voice Input</text>
+                <text x="95" y="136" text-anchor="middle" font-family="'Inter', sans-serif" font-size="11"
+                    fill="#8A8275">(Zulu, Sesotho, EN)</text>
+
+                <!-- Whisper Box -->
+                <rect x="210" y="80" width="160" height="80" rx="6" fill="#F4F0E6" stroke="#E2DCCF"
+                    stroke-width="1.5" />
+                <text x="290" y="115" text-anchor="middle" font-family="'Inter', sans-serif" font-size="13"
+                    font-weight="bold" fill="#1F1A15">Whisper-Small</text>
+                <text x="290" y="132" text-anchor="middle" font-family="'Inter', sans-serif" font-size="11"
+                    fill="#8A8275">ONNX INT8 Quantized</text>
+
+                <!-- Triage Box -->
+                <rect x="410" y="80" width="160" height="80" rx="6" fill="#F4F0E6" stroke="#E2DCCF"
+                    stroke-width="1.5" />
+                <text x="490" y="115" text-anchor="middle" font-family="'Inter', sans-serif" font-size="13"
+                    font-weight="bold" fill="#1F1A15">Triage & Receipts</text>
+                <text x="490" y="132" text-anchor="middle" font-family="'Inter', sans-serif" font-size="11"
+                    fill="#8A8275">Cryptographic Proofs</text>
+
+                <!-- Response Alert Box -->
+                <rect x="620" y="80" width="150" height="80" rx="6" fill="#ffffff" stroke="#E2DCCF" stroke-width="2" />
+                <text x="695" y="115" text-anchor="middle" font-family="'Inter', sans-serif" font-size="13"
+                    font-weight="bold" fill="#1F1A15">Response Alert</text>
+                <text x="695" y="132" text-anchor="middle" font-family="'Inter', sans-serif" font-size="11"
+                    fill="#8A8275">Local Responder Network</text>
+
+                <!-- DP Layer Box -->
+                <rect x="210" y="200" width="160" height="80" rx="6" fill="#E2EAD9" stroke="#4E5F3E"
+                    stroke-width="1.5" />
+                <text x="290" y="235" text-anchor="middle" font-family="'Inter', sans-serif" font-size="13"
+                    font-weight="bold" fill="#4E5F3E">Differential Privacy</text>
+                <text x="290" y="252" text-anchor="middle" font-family="'Inter', sans-serif" font-size="11"
+                    fill="#4E5F3E">Laplace Noise (ε=1.0)</text>
+
+                <!-- Federated Server Box -->
+                <rect x="620" y="200" width="150" height="80" rx="6" fill="#ffffff" stroke="#E2DCCF" stroke-width="2" />
+                <text x="695" y="235" text-anchor="middle" font-family="'Inter', sans-serif" font-size="13"
+                    font-weight="bold" fill="#1F1A15">Global Aggregator</text>
+                <text x="695" y="252" text-anchor="middle" font-family="'Inter', sans-serif" font-size="11"
+                    fill="#8A8275">Secure Weight Averaging</text>
+
+                <!-- Arrows -->
+                <!-- Voice -> Whisper -->
+                <path d="M 160 120 L 202 120" fill="none" stroke="#A93C29" stroke-width="2" marker-end="url(#arrow)" />
+
+                <!-- Whisper -> Triage -->
+                <path d="M 370 120 L 402 120" fill="none" stroke="#A93C29" stroke-width="2" marker-end="url(#arrow)" />
+
+                <!-- Triage -> Alert -->
+                <path d="M 570 120 L 612 120" fill="none" stroke="#A93C29" stroke-width="2" marker-end="url(#arrow)" />
+
+                <!-- Whisper -> DP (Gradients) -->
+                <path d="M 290 160 L 290 192" fill="none" stroke="#4E5F3E" stroke-width="2"
+                    marker-end="url(#arrow-green)" />
+
+                <!-- DP -> Aggregator -->
+                <path d="M 370 240 L 612 240" fill="none" stroke="#4E5F3E" stroke-width="2"
+                    marker-end="url(#arrow-green)" />
+
+                <!-- Aggregator -> Whisper (Updated weights looping back) -->
+                <path d="M 695 200 L 695 175 L 350 175 L 350 162" fill="none" stroke="#C79B3B" stroke-width="2"
+                    stroke-dasharray="4,2" marker-end="url(#arrow-gold)" />
+            </svg>
+            <div class="diagram-caption">Siza Offline Architecture: Gradients are extracted and sanitized on-device via
+                Differential Privacy before transmission to the Federated Aggregator.</div>
+        </div>
+
+        <!-- 03 THE RUNS (RECEIPT CARDS) -->
+        <div class="panel-label">
+            <div class="panel-num">3</div>
+            <div class="panel-title">Okay. Let's actually run it. (This is the part with receipts.)</div>
+        </div>
+
+        <p>Every time Siza processes audio, it doesn't just spit out text. It generates a <strong>cryptographic
+                receipt</strong>: a hash of the input audio, a hash of the exact model weights used, a hash of the
+            output, and a proof string tying them all together. The idea is that anyone a researcher, an auditor, a
+            skeptical reader can verify <em>this exact model</em> produced <em>this exact output</em> from <em>this
+                exact input</em>, without me ever having to hand over the raw audio. Verifiable, but still private.</p>
+
+        <p>Here's what happened when I pointed the prototype at four real clips during an afternoon testing run:</p>
+
+        <div class="receipt-list">
+            <!-- CLIP 1 -->
+            <div class="receipt">
+                <div class="receipt-barcode"></div>
+                <div class="receipt-header">
+                    <span>RECEIPT · CLIP 1 / ISIZULU</span>
+                    <span class="receipt-hash">0ec7e4bd…</span>
+                </div>
+                <div class="receipt-body">
+                    <div class="receipt-source">"Umlilo! Kukhona umlilo ekhaya." (Fire! There is a fire in the house.)
+                    </div>
+
+                    <div class="audio-player-mock">
+                        <audio src="audio/fire_zulu.wav" preload="none"></audio>
+                        <button class="play-btn" aria-label="Play clip 1">
+                            <svg viewBox="0 0 24 24">
+                                <polygon points="8,5 19,12 8,19" />
+                            </svg>
+                        </button>
+                        <div class="audio-wave">
+                            <span style="height: 10px;"></span><span style="height: 15px;"></span><span
+                                style="height: 22px;"></span>
+                            <span style="height: 8px;"></span><span style="height: 18px;"></span><span
+                                style="height: 12px;"></span>
+                            <span style="height: 20px;"></span><span style="height: 14px;"></span><span
+                                style="height: 25px;"></span>
+                            <span style="height: 9px;"></span><span style="height: 16px;"></span><span
+                                style="height: 12px;"></span>
+                            <span style="height: 18px;"></span><span style="height: 5px;"></span><span
+                                style="height: 10px;"></span>
+                        </div>
+                        <span class="audio-duration">0:04</span>
+                    </div>
+
+                    <div class="receipt-out">umlilo kukona umlilo ekhaya siza nukushesha</div>
+                </div>
+                <div class="receipt-footer">
+                    <span class="receipt-latency">Inference: 5.08s</span>
+                    <span class="verdict-badge verdict-rough">Partly Right</span>
+                </div>
+                <div class="receipt-jagged-bottom"></div>
+            </div>
+
+            <p>Not perfect. It correctly catches "umlilo" (fire) twice and "ekhaya" (house), but it also hallucinates
+                "siza nukushesha" at the end (phonetically close to "siza ngokushesha" help quickly) which wasn't in
+                the original audio. This is genuinely useful information for me as the builder it tells me the model
+                is anchoring on the right keywords but still needs work on full-utterance precision in isiZulu.</p>
+
+            <!-- CLIP 2 -->
+            <div class="receipt">
+                <div class="receipt-barcode"></div>
+                <div class="receipt-header">
+                    <span>RECEIPT · CLIP 2 / ENGLISH</span>
+                    <span class="receipt-hash">d61bbc36…</span>
+                </div>
+                <div class="receipt-body">
+                    <div class="receipt-source">"There's been an accident, someone is bleeding badly, send help to the
+                        taxi rank."</div>
+
+                    <div class="audio-player-mock">
+                        <audio src="audio/accident_english.wav" preload="none"></audio>
+                        <button class="play-btn" aria-label="Play clip 2">
+                            <svg viewBox="0 0 24 24">
+                                <polygon points="8,5 19,12 8,19" />
+                            </svg>
+                        </button>
+                        <div class="audio-wave">
+                            <span style="height: 8px;"></span><span style="height: 12px;"></span><span
+                                style="height: 16px;"></span>
+                            <span style="height: 19px;"></span><span style="height: 14px;"></span><span
+                                style="height: 10px;"></span>
+                            <span style="height: 18px;"></span><span style="height: 22px;"></span><span
+                                style="height: 15px;"></span>
+                            <span style="height: 24px;"></span><span style="height: 16px;"></span><span
+                                style="height: 12px;"></span>
+                            <span style="height: 20px;"></span><span style="height: 14px;"></span><span
+                                style="height: 8px;"></span>
+                        </div>
+                        <span class="audio-duration">0:06</span>
+                    </div>
+
+                    <div class="receipt-out">there's been an accident someone is bleeding badly send help to the taxi
+                        rank</div>
+                </div>
+                <div class="receipt-footer">
+                    <span class="receipt-latency">Inference: 6.39s</span>
+                    <span class="verdict-badge verdict-match">Clean Match</span>
+                </div>
+                <div class="receipt-jagged-bottom"></div>
+            </div>
+
+            <p>This one's a clean, word perfect transcription. Genuinely satisfying to watch run locally on an offline
+                sandboxed device.</p>
+
+            <!-- CLIP 3 -->
+            <div class="receipt">
+                <div class="receipt-barcode"></div>
+                <div class="receipt-header">
+                    <span>RECEIPT · CLIP 3 / ISIZULU</span>
+                    <span class="receipt-hash">6e011c92…</span>
+                </div>
+                <div class="receipt-body">
+                    <div class="receipt-source">Intended: Intruder emergency (caller is afraid, asking for help)</div>
+
+                    <div class="audio-player-mock">
+                        <audio src="audio/intruder_zulu.wav" preload="none"></audio>
+                        <button class="play-btn" aria-label="Play clip 3">
+                            <svg viewBox="0 0 24 24">
+                                <polygon points="8,5 19,12 8,19" />
+                            </svg>
+                        </button>
+                        <div class="audio-wave">
+                            <span style="height: 15px;"></span><span style="height: 24px;"></span><span
+                                style="height: 18px;"></span>
+                            <span style="height: 20px;"></span><span style="height: 26px;"></span><span
+                                style="height: 12px;"></span>
+                            <span style="height: 8px;"></span><span style="height: 16px;"></span><span
+                                style="height: 14px;"></span>
+                            <span style="height: 22px;"></span><span style="height: 10px;"></span><span
+                                style="height: 18px;"></span>
+                            <span style="height: 12px;"></span><span style="height: 6px;"></span><span
+                                style="height: 10px;"></span>
+                        </div>
+                        <span class="audio-duration">0:05</span>
+                    </div>
+
+                    <div class="receipt-out">googleana umuntu enkiniami ngyesaba ngitala usizo</div>
+                </div>
+                <div class="receipt-footer">
+                    <span class="receipt-latency">Inference: 5.82s</span>
+                    <span class="verdict-badge verdict-rough">Rough</span>
+                </div>
+                <div class="receipt-jagged-bottom"></div>
+            </div>
+
+            <p>This is where I'll be honest with you instead of cropping it out of a slide: this transcription is rough.
+                You can make out fragments "umuntu" (person), something resembling "ngiyesaba" (I'm scared), and
+                "usizo" (help) but it's far from clean. It's a real, unedited signal that isiZulu performance on
+                certain phonetic patterns still has real work ahead of it.</p>
+
+            <!-- CLIP 4 -->
+            <div class="receipt">
+                <div class="receipt-barcode"></div>
+                <div class="receipt-header">
+                    <span>RECEIPT · CLIP 4 / ISIZULU (CONTROL)</span>
+                    <span class="receipt-hash">f7fd78be…</span>
+                </div>
+                <div class="receipt-body">
+                    <div class="receipt-source">Intended: Greeting and checking standard social conversation (control
+                        clip)</div>
+
+                    <div class="audio-player-mock">
+                        <audio src="audio/no_emergency_zulu.wav" preload="none"></audio>
+                        <button class="play-btn" aria-label="Play clip 4">
+                            <svg viewBox="0 0 24 24">
+                                <polygon points="8,5 19,12 8,19" />
+                            </svg>
+                        </button>
+                        <div class="audio-wave">
+                            <span style="height: 8px;"></span><span style="height: 12px;"></span><span
+                                style="height: 10px;"></span>
+                            <span style="height: 14px;"></span><span style="height: 8px;"></span><span
+                                style="height: 12px;"></span>
+                            <span style="height: 15px;"></span><span style="height: 11px;"></span><span
+                                style="height: 9px;"></span>
+                            <span style="height: 12px;"></span><span style="height: 7px;"></span><span
+                                style="height: 14px;"></span>
+                            <span style="height: 9px;"></span><span style="height: 6px;"></span><span
+                                style="height: 8px;"></span>
+                        </div>
+                        <span class="audio-duration">0:03</span>
+                    </div>
+
+                    <div class="receipt-out">Saubhona ongehani namuhthna ghiabhona</div>
+                </div>
+                <div class="receipt-footer">
+                    <span class="receipt-latency">Inference: 4.10s</span>
+                    <span class="verdict-badge verdict-control">Garbled but Safe</span>
+                </div>
+                <div class="receipt-jagged-bottom"></div>
+            </div>
+        </div>
+
+        <p>This one was meant to just be someone saying hello and going about their day a control case to check Siza
+            doesn't cry wolf. The transcription itself is garbled, but functionally it did the important thing: it
+            didn't manufacture an emergency out of nothing. That distinction garbled-but-harmless vs.
+            garbled-and-false-alarm actually matters more for a triage system than raw word accuracy does. At this point
+            i am just blaming my voice for having cracks</p>
+
+        <div class="sticky-card">
+            Two strong results, two rough ones, all from the same model, same run, same afternoon. That's the actual,
+            current state of an early-stage research prototype, and I'd rather show you that than a highlight reel.
+            <span class="sticky-card-author">— Mihlali Mabaso</span>
+        </div>
+
+        <!-- 04 FEDERATED LEARNING -->
+        <div class="panel-label">
+            <div class="panel-num">4</div>
+            <div class="panel-title">Teaching the model without ever hearing your voice</div>
+        </div>
+
+        <p>The part of this project I'm personally most attached to is the federated learning layer, because it's the
+            part that makes the privacy promise structurally true instead of just a nice sentence in a README. I'm not a
+            privacy expert but i've tried my best to ensure your voice stays yours. Because African Data belongs to
+            Africa not AWS.</p>
+
+        <p>Here's the setup: instead of one central model trained on everyone's uploaded recordings, each device trains
+            a little on its own local data, then only sends back the <em>mathematical update</em> the gradient never
+            the audio. On top of that, I add calibrated noise (Laplace mechanism, ε ≤ 1.0, δ < 10⁻⁵) before that update
+                even leaves the device, which is the formal differential privacy guarantee that makes it mathematically
+                very hard to ever reconstruct someone's original voice from the update.</p>
+
+                <p>I ran a simulation: 10 devices, 15 rounds of training.</p>
+
+                <div class="chart-box">
+                    <img src="fl_accuracy.png" alt="Siza federated learning accuracy chart, 15 rounds, 10 devices"
+                        onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
+                    <div class="img-fallback-ph" style="display:none;">
+                        [Matplotlib Chart: fl_accuracy.png]<br>
+                        Round 1: accuracy = 56.79%<br>
+                        Round 8: accuracy = 68.39%<br>
+                        Round 15: accuracy = 81.06%
+                    </div>
+                    <div class="chart-caption">Global model accuracy across 15 federated learning rounds · 10 simulated
+                        devices · ε = 1.0 Laplace noise differential privacy · zero raw audio transmitted</div>
+                </div>
+
+                <p>A couple of things jump out when you actually plot this instead of just listing the numbers:</p>
+
+                <ul>
+                    <li style="margin-left: 20px; margin-bottom: 12px; font-size: 15.5px; color: #3a332a;"><strong>It's
+                            monotonic.</strong> Every single round improves on the last no dips, no regressions. For a
+                        federated setup with noise deliberately injected into every update for privacy, that's not
+                        guaranteed by default, so a clean upward curve is a genuinely good sign the privacy mechanism
+                        isn't fighting the learning process.</li>
+                    <li style="margin-left: 20px; margin-bottom: 12px; font-size: 15.5px; color: #3a332a;"><strong>The
+                            baseline matters.</strong> I plotted a dashed line at 0.5 random-guess accuracy for this
+                        task because we're doing a binary emergency vs safe classification specifically so the curve
+                        isn't read in a vacuum. Round 1 already clears that baseline,
+                        and by round 15 the model is sitting roughly 31 points above it.</li>
+                    <li style="margin-left: 20px; margin-bottom: 12px; font-size: 15.5px; color: #3a332a;"><strong>The
+                            privacy guarantee is on the chart, not just in a footnote.</strong> I annotated ε = 1.0
+                        (Laplace noise) and "no raw audio transmitted" directly on the plot, because I'd rather the
+                        privacy claim travel with the result everywhere this graph gets shared, including outside this
+                        blog.</li>
+                </ul>
+
+                <p style="margin-top: 16px;">That's a 24-point accuracy jump, achieved entirely through federated
+                    updates, with zero raw audio samples ever pooled in one place. Each simulated device only ever saw
+                    8–19 of its own local samples. Nobody including me ever had access to a combined dataset of
+                    everyone's voices. That's the whole point.</p>
+
+                <!-- 05 STUDENT REFLECTIONS (NEW SECTION) -->
+                <div class="panel-label">
+                    <div class="panel-num">5</div>
+                    <div class="panel-title">A Student's Journal: Lessons in Latency, Memory, and Community-Driven AI
+                    </div>
+                </div>
+
+                <div class="journal-section">
+                    <div class="journal-intro">
+                        <p class="journal-lede">
+                            Building Siza wasn’t just an exercise in compiling WebAssembly or fine-tuning models on a
+                            high-end academic cluster. It was a collision course with the reality of computing in
+                            resource-constrained environments. As a student researcher at the University of the Free
+                            State, this project reshaped how I view machine learning, systems architecture, and
+                            community ethics.
+                        </p>
+                    </div>
+
+                    <div class="journal-grid">
+                        <div class="journal-card">
+                            <div class="card-accent-bar"></div>
+                            <h4>1. The Reality of the R500 Phone: The WASM Memory Battle</h4>
+                            <p>In the classroom, we are taught to measure model performance by accuracy and F1-score,
+                                assuming unlimited hardware resources. But when I tried to deploy Whisper-small on a
+                                sub-R500 Android phone, the browser tab immediately crashed with an
+                                <code>Out of Memory (OOM)</code> error.
+                            </p>
+                            <p>The browser WASM runtime on low-end devices allocates a maximum heap of 512MB. Loading a
+                                240MB model weights file even quantized down to 75MB in 8-bit integers consumed almost
+                                the entire available memory before processing even began. I spent weeks learning how to
+                                debug memory leaks in C++ WebAssembly boundaries, implementing aggressive garbage
+                                collection, and streaming audio in small chunks rather than loading entire buffers into
+                                memory. I learned that in the real world, memory efficiency is just as critical as model
+                                accuracy.</p>
+                        </div>
+
+                        <div class="journal-card">
+                            <div class="card-accent-bar"></div>
+                            <h4>2. Agglutination & Code-Switching in isiZulu NLP</h4>
+                            <p>State-of-the-art speech recognition systems are built for English, a language with high
+                                analytic structure. isiZulu, however, is a highly agglutinative language where prefixes,
+                                infixes, and suffixes are concatenated to verb roots to alter meaning. A single Zulu
+                                word can represent what English requires an entire sentence to say (e.g.,
+                                <i>"bayasizakala"</i> means "they are being helped").
+                            </p>
+                            <p>When Whisper transcribes, it often struggles with these complex morphosyntactic
+                                structures, leading to phonetic spelling hallucinations (like transcribing <i>"siza
+                                    ngokushesha"</i> as <i>"siza nukushesha"</i>). Furthermore, South Africans naturally
+                                "code-switch" blending English and isiZulu mid-sentence. Teaching a local, quantized
+                                model to decode mixed-language utterances without expanding the model size past 100MB is
+                                one of the hardest NLP research challenges I have encountered.</p>
+                        </div>
+
+                        <div class="journal-card">
+                            <div class="card-accent-bar"></div>
+                            <h4>3. Privacy, Trust, and the Protection of Personal Information Act (POPIA)</h4>
+                            <p>Under South Africa's POPI Act, voice recordings are classified as biometric data,
+                                requiring strict protection. Collecting emergency recordings from vulnerable populations
+                                and uploading them to a centralized cloud server for training is not only a security
+                                risk, but it also damages community trust.</p>
+                            <p>Federated Learning (FL) combined with Differential Privacy (DP) was the only ethical path
+                                forward. By training models locally on individual devices and only uploading
+                                mathematical parameter gradients, we ensure that an individual's actual voice never
+                                leaves their phone. Adding Laplace noise to the gradients before transmission guarantees
+                                that no one can reconstruct the original audio. Learning how to balance the privacy
+                                budget (denoted as ε) with the learning rate of the model was a masterclass in
+                                mathematical privacy engineering.</p>
+                        </div>
+
+                        <div class="journal-card">
+                            <div class="card-accent-bar"></div>
+                            <h4>4. The Human Element: Shifting from Coder to Partner</h4>
+                            <p>Perhaps the most profound lesson I learned was that technology is only a minor fraction
+                                of the solution. You can build the most mathematically sound, secure, offline neural
+                                network, but if it doesn't solve a human problem, it is just code sitting on a server.
+                            </p>
+                            <p>Speaking with community health workers in rural villages, I realized they don't care
+                                about ONNX quantization or Laplace distributions. They care that the interface is a
+                                single, clear button, and that the app respects their language. It taught me that real
+                                research isn't about extraction; it's about partnership. This is why Siza is
+                                open-source, and why we are designing the training datasets with local health workers as
+                                stakeholders who share ownership in the model.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 06 SECURITY ATTACK -->
+                <div class="panel-label">
+                    <div class="panel-num">6</div>
+                    <div class="panel-title">Then I tried to attack my own system</div>
+                </div>
+
+                <p>This is the part of the demo I genuinely enjoy showing my friends although most didnt understand the
+                    hype, because it's the only section where I
+                    deliberately tried to make something bad happen.</p>
+
+                <p>I wrote a small malicious script, a "capsule" and had it attempt three things inside Siza's
+                    processing sandbox: read files off the device, open a network connection, and write to disk.
+                    Basically the starter pack of "things malware tries to do."</p>
+
+                <div class="console-window">
+                    <div class="console-header">
+                        <div class="console-dots">
+                            <div class="console-dot dot-red"></div>
+                            <div class="console-dot dot-yellow"></div>
+                            <div class="console-dot dot-green"></div>
+                        </div>
+                        <div class="console-title">siza-sandbox-monitor: test-capsule</div>
+                    </div>
+                    <div class="console-body">
+                        <div class="console-line"><span class="console-prompt">$</span> ./run_sandbox_test.sh
+                            --capsule=malicious_payload.bin</div>
+                        <div class="console-line">Initializing Siza WebAssembly boundary isolation... <span
+                                class="console-success">OK</span></div>
+                        <div class="console-line">Executing capsule payload inside sandbox...</div>
+                        <div class="console-line"><span class="console-warn">[SANDBOX ERROR]</span> capsule requests
+                            file system read access -> <span class="console-error">BLOCKED</span></div>
+                        <div class="console-line"><span class="console-warn">[SANDBOX ERROR]</span> capsule requests
+                            outgoing network connection -> <span class="console-error">BLOCKED</span></div>
+                        <div class="console-line"><span class="console-warn">[SANDBOX ERROR]</span> capsule requests
+                            local storage write permissions -> <span class="console-error">BLOCKED</span></div>
+                        <div class="console-line">--- Capsule Execution Interrupted ---</div>
+                        <div class="console-line">Security Violations: <span class="console-warn">3</span></div>
+                        <div class="console-line">Payload actions intercepted: <span class="console-success">100%</span>
+                        </div>
+                        <div class="console-line">Data exfiltrated: <span class="console-success">0 bytes</span></div>
+                        <div class="console-line">Sandbox integrity status: <span class="console-success">INTACT
+                                (Isolation Bound Active)</span></div>
+                    </div>
+                </div>
+
+                <p>All three blocked, zero bytes leaked, sandbox came out intact. I'm not going to pretend one
+                    self authored test script proves Siza is unbreakable, it isn't a substitute for proper third-party
+                    security auditing, which is on my roadmap but it's a real, working demonstration that the
+                    isolation boundary does what it's supposed to do under deliberate pressure.</p>
+
+                <!-- 07 POSTER NUMBERS -->
+                <div class="panel-label">
+                    <div class="panel-num">7</div>
+                    <div class="panel-title">The numbers on the poster and what they actually mean</div>
+                </div>
+
+                <p>I want to flag this clearly, because it's easy for a poster's headline stats to get read as "field
+                    results" when they're not, yet.</p>
+
+                <p>The performance comparison on my poster 94% accuracy at 5dB SNR, 10% WER, sub-0.5-second latency,
+                    all beating a cloud baseline is <strong>literature-based projection</strong>, built from published
+                    benchmarks on Whisper fine-tuning for African languages, ONNX INT8 quantization gains, and measured
+                    cloud API latency to rural South African endpoints. It is <em>not</em> a field-measured result for
+                    Siza itself. I labeled it that way on the poster on purpose, and I'm repeating it here because
+                    credibility matters more to me than a bigger number.</p>
+
+                <p>What <em>is</em> real and field-tested today: the four transcriptions above, the federated learning
+                    simulation, and the sandbox security test. Everything else is the target I'm building toward, and
+                    I'd rather you trust the line between those two categories than be impressed by a number I can't yet
+                    back with data.</p>
+
+                <!-- 08 OPEN FRONTIERS -->
+                <div class="panel-label">
+                    <div class="panel-num">8</div>
+                    <div class="panel-title">What's still genuinely unsolved</div>
+                </div>
+
+                <p>In the spirit of not pretending this is finished because it absolutely isn't here's what's still
+                    open on the research horizon:</p>
+
+                <div class="frontiers-grid">
+                    <div class="frontier-card">
+                        <div class="frontier-icon">?</div>
+                        <div class="frontier-details">
+                            <h4>Getting the model under 50MB</h4>
+                            <p>Testing structured pruning against quantization on the Whisper-small backbone to make it
+                                light enough for truly low-end ARM hardware.</p>
+                        </div>
+                    </div>
+                    <div class="frontier-card">
+                        <div class="frontier-icon">?</div>
+                        <div class="frontier-details">
+                            <h4>Code-switching Mid-sentence</h4>
+                            <p>South African speech rarely stays in one language, which no one taught use to mix
+                                languages in a sentence but sometimes it just makes sense. Mixed isiZulu English
+                                sentences are a
+                                much harder decoding problem than single language clips.</p>
+                        </div>
+                    </div>
+                    <div class="frontier-card">
+                        <div class="frontier-icon">?</div>
+                        <div class="frontier-details">
+                            <h4>Validating Triage with Clinicians</h4>
+                            <p>I want community health workers not just me designing and checking the clinical
+                                accuracy triage rubric, assuming zero hospital infrastructure.</p>
+                        </div>
+                    </div>
+                    <div class="frontier-card">
+                        <div class="frontier-icon">?</div>
+                        <div class="frontier-details">
+                            <h4>Federated Learning on Spotty Networks</h4>
+                            <p>Exploring delta weight syncing and checkpoint compression so a device offline for hours
+                                doesn't fall out of the training round entirely.</p>
+                        </div>
+                    </div>
+                </div>
+
+    </main>
+
+    <footer class="blog-footer">
+        <div class="footer-content">
+            <h4 class="footer-heading">Why I'm building this in public</h4>
+            <p class="footer-text">Siza is Apache 2.0 licensed on purpose. I'm running community data sprints with
+                health workers, nurses, and student contributors across isiZulu, Sesotho, Afrikaans, Xitsonga, and
+                English — targeting 5,000+ hours of data, POPIA-compliant, with no raw audio ever stored externally. The
+                community contributing the data should own a stake in the model and the project, not just be a data
+                source for it.</p>
+
+            <div class="footer-links">
+                <span>GitHub: <a href="https://github.com/Mihlali-Mabaso" target="_blank"
+                        rel="noopener noreferrer">github.com/Mihlali-Mabaso</a></span>
+                <span>Email: <a href="mailto:mihlalidataweb@gmail.com">mihlalidataweb@gmail.com</a></span>
+            </div>
+
+            <div class="footer-closing">
+                <span>© 2026 Mihlali Mabaso. Built with pride in South Africa.</span>
+                <span class="eyebrow-tag" style="border-color: var(--clay-rust); color: var(--clay-rust);">Open Research
+                    Prototype</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.querySelectorAll('.receipt').forEach((receipt, index) => {
+            const playBtn = receipt.querySelector('.play-btn');
+            const audio = receipt.querySelector('audio');
+
+            if (!playBtn || !audio) return;
+
+            playBtn.addEventListener('click', () => {
+                // Pause any other playing audio
+                document.querySelectorAll('.receipt').forEach((otherReceipt) => {
+                    const otherAudio = otherReceipt.querySelector('audio');
+                    const otherBtn = otherReceipt.querySelector('.play-btn');
+                    if (otherAudio && otherAudio !== audio && !otherAudio.paused) {
+                        otherAudio.pause();
+                        otherReceipt.classList.remove('playing');
+                        otherBtn.innerHTML = '<svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg>';
+                    }
+                });
+
+                if (audio.paused) {
+                    audio.play().then(() => {
+                        receipt.classList.add('playing');
+                        playBtn.innerHTML = '<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
+                    }).catch(err => {
+                        console.warn("Audio file not found: " + audio.src);
+                        alert("To hear the recording, make sure you create an 'audio/' folder in your repository, place the original audio files there (named 'fire_zulu.wav', 'accident_english.wav', 'intruder_zulu.wav', 'no_emergency_zulu.wav' respectively), and push them to GitHub!");
+                    });
+                } else {
+                    audio.pause();
+                    receipt.classList.remove('playing');
+                    playBtn.innerHTML = '<svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg>';
+                }
+            });
+
+            // Reset state when audio ends
+            audio.addEventListener('ended', () => {
+                receipt.classList.remove('playing');
+                playBtn.innerHTML = '<svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg>';
+            });
+        });
+    </script>
+</body>
+
+</html>
