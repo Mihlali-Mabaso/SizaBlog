@@ -11,4 +11,4 @@ Scanned the research poster and ended up here? Excellent. This repository holds 
 * **A Student's Journal**: Honest reflections of a University of the Free State student moving from theoretical code to community-centric partner.
 
 ---
-*Siza is open-source under the Apache 2.0 license. Let's build emergency tech that leaves no one behind.*
+*Siza is open-source under the Apache 2.0 license. Let's build emergency tech that leaves no one behind.Go to git pages to read the entire blog*
